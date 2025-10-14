@@ -1,22 +1,20 @@
-'use client';
+import {
+  Dialog,
+  DialogBackdrop,
+  DialogPanel,
+  Transition,
+} from "@headlessui/react";
+import {
+  Fragment,
+  type FC,
+  type PropsWithChildren
+} from "react";
 
-import { Dialog, DialogBackdrop, DialogPanel, Transition } from "@headlessui/react";
-import { Fragment, useMemo } from "react";
-import applications from "../../utils/applications.json";
-import { SelectBox } from "../multi-select/multi-select.component";
-import { PeriodFilter } from "../period-filter/period-filter.component";
-import { CeilingFilter } from "../ceiling-filter/ceiling-filter.component";
-
-const GSADialog = ({ isOpen, setOpen, children }) => {
-  const vehicles = useMemo(
-    () => Array.from(new Set(applications.map((item) => item.vehicle))),
-    []
-  );
-  const agency = useMemo(
-    () => Array.from(new Set(applications.map((item) => item.agency))),
-    []
-  );
-
+interface IGSADialog extends PropsWithChildren {
+  isOpen: boolean;
+  setOpen: (is: boolean) => void;
+}
+const GSADialog: FC<IGSADialog> = ({ isOpen, setOpen, children }) => {
   return (
     <Transition appear show={isOpen} as={Fragment}>
       <Dialog as="div" className="relative z-50" onClose={setOpen}>
@@ -33,7 +31,6 @@ const GSADialog = ({ isOpen, setOpen, children }) => {
           <DialogBackdrop className="fixed inset-0 bg-black/30 backdrop-blur-sm" />
         </Transition.Child>
 
-        {/* Bottom Sheet Container */}
         <div className="fixed inset-0 flex items-end justify-center sm:items-center sm:justify-center">
           <Transition.Child
             as={Fragment}
@@ -51,8 +48,7 @@ const GSADialog = ({ isOpen, setOpen, children }) => {
                 transform transition-all
               "
             >
-              {/* Header Bar (drag handle style) */}
-             {children}
+              {children}
             </DialogPanel>
           </Transition.Child>
         </div>

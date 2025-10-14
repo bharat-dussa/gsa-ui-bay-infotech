@@ -1,10 +1,9 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
-import { useApp } from "../../store/app-wrapper.context";
-import { delay } from "../../utils/apply-filter";
-import { useDelay } from "../../hooks/useDelay.hook";
+import React, { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router";
+import { useDelay } from "../../hooks/useDelay.hook";
+import { useApp } from "../../store/app-wrapper.context";
 
 type KeywordChipsProps = {
   value?: string[];

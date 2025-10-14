@@ -1,16 +1,16 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { format, formatDistanceToNowStrict, parseISO } from "date-fns";
 import {
   Award,
-  Check,
   CircleCheckBig,
   CircleDotDashed,
   FileX,
-  MailCheck,
+  MailCheck
 } from "lucide-react";
 import React, { useMemo, useState } from "react";
-import { useApp } from "../../store/app-wrapper.context";
+import { useApp, type Filters } from "../../store/app-wrapper.context";
+import { applyFilters } from "../../utils/common";
 import GSADialog from "../filter-dialog/filter-dialog.component";
-import { applyFilters } from "../../utils/apply-filter";
 import { Skeleton } from "../skeleton/rectangle.component";
 
 type SortKey = "dueDate" | "percentComplete" | "fitScore" | null;
@@ -28,7 +28,7 @@ export const ResultsTable = ({ data }: { data: any[] }) => {
 
   const { filtered } = applyFilters(data, filters);
 
-  console.log('isLoading', isLoading);
+  console.log("isLoading", isLoading);
   const results = useMemo(() => {
     const list = [...filtered];
     if (!sortKey) return list;
@@ -63,7 +63,7 @@ export const ResultsTable = ({ data }: { data: any[] }) => {
   const markAsSubmitted = () => {
     if (!selectedItem) return;
     selectedItem.status = "Submitted";
-    setFilter("dummy", Math.random().toString());
+    setFilter("dummy" as unknown as keyof Filters, Math.random().toString());
     setIsDetailsModalOpen(false);
   };
 
@@ -193,23 +193,23 @@ export const ResultsTable = ({ data }: { data: any[] }) => {
           </thead>
           <tbody>
             {isLoading && (
-               <>
-                <tr className="my-2" >
+              <>
+                <tr className="my-2">
                   <td colSpan={8} className="my-12">
-                    <Skeleton type={"square"} />
+                    <Skeleton />
                   </td>
                 </tr>
                 <tr className="py-2">
                   <td colSpan={8}>
-                    <Skeleton type={"square"} />
+                    <Skeleton />
                   </td>
                 </tr>
                 <tr>
                   <td colSpan={8}>
-                    <Skeleton type={"square"} />
+                    <Skeleton />
                   </td>
                 </tr>
-               </>
+              </>
             )}
             {results.length === 0 && (
               <tr>

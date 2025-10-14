@@ -1,10 +1,24 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useApp } from "../../store/app-wrapper.context";
+import { useSearchParams } from "react-router";
 
 export const CeilingFilter = () => {
-  const { filters, setFilter } = useApp();
+  const { setFilter } = useApp();
+  const [searchParams] = useSearchParams();
+
   const [min, setMin] = useState<string>("");
   const [max, setMax] = useState<string>("");
+
+  useEffect(() => {
+    const ceilingParam = searchParams.get("ceiling");
+    if (ceilingParam && ceilingParam.includes("_")) {
+      const [minVal, maxVal] = ceilingParam.split("_");
+      setMin(minVal || "");
+      setMax(maxVal && maxVal !== "999999999" ? maxVal : "");
+      setFilter("ceiling", `${minVal || 0}_${maxVal || 999999999}`);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleCeilingChange = (minVal: string, maxVal: string) => {
     setMin(minVal);

@@ -1,8 +1,4 @@
-export const Skeleton = ({
-  type,
-}: {
-  type: "square" | "rectangle" | "circle";
-}) => {
+export const Skeleton = () => {
   return (
     <div
       role="status"

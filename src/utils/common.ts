@@ -1,8 +1,22 @@
 import { addDays } from "date-fns";
 
-
 export function delay(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+export interface GSAItem {
+  id: string;
+  title: string;
+  agency: string;
+  naics: string;
+  setAside: string[]; 
+  vehicle: string; 
+  dueDate: string; 
+  status: "Draft" | "Ready" | "Submitted" | "Awarded" | "Lost";
+  percentComplete: number;
+  fitScore: number; 
+  ceiling: number; 
+  keywords: string[];
 }
 
 interface Filters {
@@ -16,17 +30,26 @@ interface Filters {
 }
 
 interface FilterResult {
-  filtered: any[];
+  filtered: GSAItem[];
   submissionProgress: number;
 }
-export function applyFilters(data: any[], filters: Filters): FilterResult {
+export function applyFilters(data: GSAItem[], filters: Filters): FilterResult {
   if (!filters) return { filtered: data, submissionProgress: 0 };
 
   const keywordList = Array.isArray(filters.keywords)
-  ? filters.keywords
-  : typeof filters.keywords === 'string'
-  ? [filters.keywords]
-  : [];
+    ? filters.keywords
+    : typeof filters.keywords === "string"
+    ? [filters.keywords]
+    : [];
+
+  const setAsideList = Array.isArray(filters.setAside)
+    ? filters.setAside
+    : typeof filters.setAside === "string"
+    ? (filters.setAside as string)
+        ?.split(",")
+        .map((s) => s.trim())
+        .filter(Boolean)
+    : [];
 
   const filtered = data.filter((item) => {
     if (filters.naics && item.naics !== filters.naics) return false;
@@ -34,9 +57,8 @@ export function applyFilters(data: any[], filters: Filters): FilterResult {
     if (filters.vehicle && item.vehicle !== filters.vehicle) return false;
 
     if (
-      filters.setAside &&
-      filters.setAside.length > 0 &&
-      !filters.setAside.some((s) => item.setAside.includes(s))
+      setAsideList.length > 0 &&
+      !setAsideList.some((s) => item.setAside.includes(s))
     ) {
       return false;
     }

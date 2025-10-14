@@ -1,14 +1,40 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useApp } from "../../store/app-wrapper.context";
-import { addDays, format, isAfter } from "date-fns";
+import { addDays, format, isAfter, parseISO } from "date-fns";
+import { useSearchParams } from "react-router";
 import clsx from "clsx";
 
 export const PeriodFilter = () => {
-  const { filters, setFilter } = useApp();
+  const { setFilter } = useApp();
+  const [searchParams] = useSearchParams();
 
   const [from, setFrom] = useState<string>("");
   const [to, setTo] = useState<string>("");
   const [quick, setQuick] = useState<number | null>(null);
+
+  useEffect(() => {
+    const periodParam = searchParams.get("period");
+    if (!periodParam) return;
+
+    if (periodParam.endsWith("d")) {
+      const days = parseInt(periodParam.replace("d", ""), 10);
+      setQuick(days);
+      const today = new Date();
+      const future = addDays(today, days);
+      setFrom(format(today, "yyyy-MM-dd"));
+      setTo(format(future, "yyyy-MM-dd"));
+      setFilter("period", `${days}d`);
+    } else if (periodParam.includes("_")) {
+      const [start, end] = periodParam.split("_");
+      if (start && end) {
+        setQuick(null);
+        setFrom(format(parseISO(start), "yyyy-MM-dd"));
+        setTo(format(parseISO(end), "yyyy-MM-dd"));
+        setFilter("period", `${start}_${end}`);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleQuickSelect = (days: number) => {
     setQuick(days);
@@ -36,17 +62,16 @@ export const PeriodFilter = () => {
         Period
       </label>
 
-      {/* Quick Select Chips */}
-      <div className="flex gap-2 mb-3">
+      <div className="flex gap-2 mb-3 flex-wrap">
         {[30, 60, 90].map((days) => (
           <button
             key={days}
             onClick={() => handleQuickSelect(days)}
             className={clsx(
-              "px-3 py-1 text-sm rounded-full border transition",
+              "px-3 py-1 text-sm rounded-full border border-dotted transition",
               quick === days
-                ? "bg-black text-white border-blue-600"
-                : "bg-white text-gray-700 border-dashed border-blue-00 hover:bg-blue-50"
+                ? "bg-black text-white border-black"
+                : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50"
             )}
           >
             Next {days} days
@@ -54,7 +79,6 @@ export const PeriodFilter = () => {
         ))}
       </div>
 
-      {/* Custom Date Range */}
       <div className="grid grid-cols-2 gap-2">
         <div>
           <label className="block text-xs text-gray-500 mb-1">From</label>

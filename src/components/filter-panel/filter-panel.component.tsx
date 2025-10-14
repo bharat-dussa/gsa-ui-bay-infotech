@@ -1,14 +1,9 @@
-import {
-  ChevronDown,
-  ClipboardClock,
-  Codesandbox,
-  ListFilter,
-} from "lucide-react";
+import { ChevronDown, Codesandbox, ListFilter } from "lucide-react";
 import { useMemo, useState } from "react";
-import { useDelay } from "../../hooks/useDelay.hook";
 import { useApp } from "../../store/app-wrapper.context";
 import applications from "../../utils/applications.json";
-import { applyFilters } from "../../utils/apply-filter";
+import { applyFilters, delay, type GSAItem } from "../../utils/common";
+import { Button } from "../button/button.component";
 import { CeilingFilter } from "../ceiling-filter/ceiling-filter.component";
 import GSADialog from "../filter-dialog/filter-dialog.component";
 import KeywordChips from "../keyword-chips/keyword-chips.component";
@@ -16,11 +11,40 @@ import { SelectBox } from "../multi-select/multi-select.component";
 import { PeriodFilter } from "../period-filter/period-filter.component";
 import { ProgressDashboard } from "../progress-dashboard/progress-dashboard.component";
 import { ResultsTable } from "../result-table/result-table.component";
+import toast from "react-hot-toast";
 
 const FilterPanel = () => {
-  const { savePresets, loadPresets, filters, isLoading } = useApp();
+  const [isSavePresetsLoading, setIsSavePresetsLoading] = useState(false);
+  const [isFilterApplying, setIsFilterApplying] = useState(false);
+  const [, setIsPresetsLoading] = useState(false);
+  const { savePresets, loadPresets, filters } = useApp();
   const [open, setOpen] = useState(false);
 
+  const onLoadPresets = () => {
+    setIsPresetsLoading(true);
+    delay(450)
+      .then(() => {
+        loadPresets();
+        toast.success("Previous presets are loaded!");
+      })
+      .catch(() => {
+        toast.error("Error while getting presets");
+      })
+      .finally(() => setIsPresetsLoading(false));
+  };
+
+  const onSavePresets = () => {
+    setIsSavePresetsLoading(true);
+    delay(450)
+      .then(() => {
+        savePresets();
+        toast.success("Presets are saved!");
+      })
+      .catch(() => {
+        toast.error("Error while saving presets");
+      })
+      .finally(() => setIsSavePresetsLoading(false));
+  };
   const naicsOptions = useMemo(
     () => Array.from(new Set(applications.map((item) => item.naics))),
     []
@@ -40,11 +64,19 @@ const FilterPanel = () => {
     []
   );
 
-  const onClickApplyFilters = useDelay(() => {
-    setOpen(false);
-  }, 1000);
+  const onClickApplyFilters = () => {
+    setIsFilterApplying(true);
 
-  const { filtered } = applyFilters(applications, filters);
+    delay(400)
+      .then(() => {
+        setOpen(false);
+        toast.success("Filters added successfully!");
+      })
+      .catch((error) => toast.error(error || "Something went wrong!"))
+      .finally(() => setIsFilterApplying(false));
+  };
+
+  const { filtered } = applyFilters(applications as GSAItem[], filters);
 
   return (
     <div className="w-full">
@@ -62,21 +94,20 @@ const FilterPanel = () => {
 
           {/* NAICS Dropdown */}
           <SelectBox label="NAICS" options={naicsOptions} filterKey="naics" />
-
-          {/* Set-Aside MultiSelect */}
         </div>
 
         {/* Divider */}
         <hr className="h-px my-0 bg-gray-200 border-0" />
 
         <div className="flex flex-col px-2 justify-end mt-2 gap-2 pr-6 md:flex-row">
-          <button
-            onClick={savePresets}
-            className="bg-black text-white w-full sm:w-auto rounded-lg px-4 py-2 text-sm font-medium hover:bg-gray-800 transition flex justify-center items-center gap-2"
-          >
-            <ClipboardClock size={16} /> Apply Preset
-          </button>
-          <button onClick={loadPresets}>Load Preset</button>
+          <Button
+            disabled={isSavePresetsLoading}
+            title="Save Preset"
+            onClick={onSavePresets}
+            loadingText="Saving..."
+            icon
+          />
+          <button onClick={onLoadPresets}>Load Preset</button>
         </div>
         {/* More Filters Section */}
         <div
@@ -122,13 +153,12 @@ const FilterPanel = () => {
         </div>
 
         <div className="border-t border-gray-200 flex flex-col sm:flex-row sm:justify-end p-4 gap-3">
-          <button
-            type="button"
+          <Button
+            disabled={isFilterApplying}
+            title="Apply Filters"
             onClick={onClickApplyFilters}
-            className="bg-black text-white w-full sm:w-auto rounded-lg px-4 py-2 text-sm font-medium hover:bg-gray-800 transition"
-          >
-            Apply Filters
-          </button>
+            loadingText="Applying..."
+          />
           <button
             type="button"
             onClick={() => setOpen(false)}

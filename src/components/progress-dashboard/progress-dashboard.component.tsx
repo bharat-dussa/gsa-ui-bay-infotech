@@ -1,16 +1,14 @@
-"use client";
-
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useMemo } from "react";
-import { Cell, Pie, PieChart, ResponsiveContainer, Sector } from "recharts";
-import type { PieSectorDataItem } from "recharts/types/polar/Pie";
+import { Cell, Pie, PieChart, ResponsiveContainer } from "recharts";
+import type { GSAItem } from "../../utils/common";
 
 interface ProgressDashboardProps {
-  results: any[];
+  results: GSAItem[];
 }
 
 export const ProgressDashboard: React.FC<ProgressDashboardProps> = ({
   results,
-  submissionProgress,
 }) => {
   const statusCounts = useMemo(() => {
     const counts = { Draft: 0, Ready: 0, Submitted: 0, Awarded: 0, Lost: 0 };
@@ -19,8 +17,6 @@ export const ProgressDashboard: React.FC<ProgressDashboardProps> = ({
     });
     return counts;
   }, [results]);
-
-  const total = Object.values(statusCounts).reduce((a, b) => a + b, 0) || 1;
 
   const avgProgress = useMemo(() => {
     if (results.length === 0) return 0;
@@ -39,9 +35,7 @@ export const ProgressDashboard: React.FC<ProgressDashboardProps> = ({
 
   return (
     <div className="w-full rounded-2xl bg-white border border-gray-200  sm:rounded-xl shadow-sm p-4 sm:p-6 mb-6 overflow-hidden">
-      {/* ✅ Responsive Flex Layout */}
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 w-full">
-        {/* ✅ Status Counters */}
         <div className="flex flex-wrap justify-center lg:justify-start gap-4 text-sm w-full lg:w-auto">
           {Object.entries(statusCounts).map(([status, count]) => (
             <div
@@ -56,7 +50,7 @@ export const ProgressDashboard: React.FC<ProgressDashboardProps> = ({
           ))}
         </div>
 
-        {/* ✅ Donut Chart */}
+        {/* Donut Chart */}
         <div className="flex justify-center items-center w-full lg:w-[280px] h-40 sm:h-52 md:h-60">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
@@ -73,7 +67,7 @@ export const ProgressDashboard: React.FC<ProgressDashboardProps> = ({
         </div>
       </div>
 
-      {/* ✅ Average Progress */}
+      {/* Average Progress */}
       <div className="mt-8 w-full">
         <div className="flex justify-between items-center text-xs sm:text-sm text-gray-600 mb-1 flex-wrap">
           <span>Average % Complete</span>

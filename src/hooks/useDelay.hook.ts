@@ -1,6 +1,6 @@
 import { useApp } from "../store/app-wrapper.context";
 import { useCallback } from "react";
-import { delay } from "../utils/apply-filter";
+import { delay } from "../utils/common";
 
 export const useDelay = (callback: (...args: any[]) => void, ms: number = 800) => {
   const { setIsLoading } = useApp();
