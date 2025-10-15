@@ -12,15 +12,18 @@
   "dependencies": {
     "@headlessui/react": "^2.2.9",
     "@tailwindcss/vite": "^4.1.14",
+    "add": "^2.0.6",
     "date-fns": "^4.1.0",
     "lucide-react": "^0.545.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-hot-toast": "^2.6.0",
     "react-is": "^19.2.0",
+    "react-loading-skeleton": "^3.5.0",
     "react-router": "^7.9.4",
     "recharts": "^3.2.1",
-    "tailwindcss": "^4.1.14"
+    "tailwindcss": "^4.1.14",
+    "yarn": "^1.22.22"
   },
   "devDependencies": {
     "@eslint/js": "^9.36.0",

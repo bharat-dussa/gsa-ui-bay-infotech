@@ -27,10 +27,12 @@ interface IButton
     HTMLButtonElement
   > {
   loadingText: string;
+  isLoading: boolean;
   icon?: boolean;
 }
 export const Button: FC<IButton> = ({
   loadingText,
+  isLoading,
   icon = false,
   ...props
 }) => {
@@ -42,7 +44,7 @@ export const Button: FC<IButton> = ({
         disabled ? "bg-gray-400 hover:bg-gray-400" : "hover:bg-gray-800"
       }`}
     >
-      {disabled ? (
+      {isLoading ? (
         <>
           {" "}
           <Loader /> {loadingText}

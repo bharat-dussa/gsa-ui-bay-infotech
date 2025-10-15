@@ -5,13 +5,13 @@ import {
   CircleCheckBig,
   CircleDotDashed,
   FileX,
-  MailCheck
+  MailCheck,
 } from "lucide-react";
 import React, { useMemo, useState } from "react";
 import { useApp, type Filters } from "../../store/app-wrapper.context";
 import { applyFilters } from "../../utils/common";
 import GSADialog from "../filter-dialog/filter-dialog.component";
-import { Skeleton } from "../skeleton/rectangle.component";
+import Skeleton from "react-loading-skeleton";
 
 type SortKey = "dueDate" | "percentComplete" | "fitScore" | null;
 type SortDir = "asc" | "desc";
@@ -28,7 +28,6 @@ export const ResultsTable = ({ data }: { data: any[] }) => {
 
   const { filtered } = applyFilters(data, filters);
 
-  console.log("isLoading", isLoading);
   const results = useMemo(() => {
     const list = [...filtered];
     if (!sortKey) return list;
@@ -129,11 +128,13 @@ export const ResultsTable = ({ data }: { data: any[] }) => {
   return (
     <div className="w-full">
       <div className="flex flex-col sm:flex-row justify-between items-center mb-4 gap-3">
-        <div className="text-sm text-gray-700">
-          Showing{" "}
-          <span className="font-semibold text-gray-900">{results.length}</span>{" "}
-          {isFiltered ? "filtered results" : "total results"}
-        </div>
+      <div className="text-sm text-gray-700 flex gap-x-0.5 items-center justify-center">
+           <span> Showing</span>
+            <span className="font-semibold text-gray-900">
+              {isLoading ? <Skeleton borderRadius={4} width={18} height={18} direction="ltr"/> : results.length}
+            </span>
+            <span>{isFiltered ? "filtered results" : "total results"}</span>
+          </div>
 
         <div className="flex items-center gap-2">
           {isFiltered && (
@@ -191,26 +192,7 @@ export const ResultsTable = ({ data }: { data: any[] }) => {
               </th>
             </tr>
           </thead>
-          <tbody>
-            {isLoading && (
-              <>
-                <tr className="my-2">
-                  <td colSpan={8} className="my-12">
-                    <Skeleton />
-                  </td>
-                </tr>
-                <tr className="py-2">
-                  <td colSpan={8}>
-                    <Skeleton />
-                  </td>
-                </tr>
-                <tr>
-                  <td colSpan={8}>
-                    <Skeleton />
-                  </td>
-                </tr>
-              </>
-            )}
+          <tbody className="border-spacing-2.5">
             {results.length === 0 && (
               <tr>
                 <td
@@ -236,7 +218,14 @@ export const ResultsTable = ({ data }: { data: any[] }) => {
               </tr>
             )}
 
-            {results.length > 0 &&
+            {isLoading ? (
+              <tr>
+                <td colSpan={8} className="p-4">
+                  <Skeleton count={6} className="w-full h-16 my-" />
+                </td>
+              </tr>
+            ) : (
+              results.length > 0 &&
               results.map((r, i) => (
                 <tr
                   key={i}
@@ -279,7 +268,8 @@ export const ResultsTable = ({ data }: { data: any[] }) => {
                   </td>
                   <td className="py-2 px-3 font-semibold">{r.fitScore}</td>
                 </tr>
-              ))}
+              ))
+            )}
           </tbody>
         </table>
       </div>
@@ -356,12 +346,15 @@ export const ResultsTable = ({ data }: { data: any[] }) => {
 
 function highlightText(text: string, keywords: string[] = []) {
   if (!keywords || keywords.length === 0) return text;
-  const regex = new RegExp(`(${keywords?.join("|")})`, "gi");
+
+  const keywordsList: string[] = [];
+  keywordsList.push(...keywords);
+  const regex = new RegExp(`(${keywordsList?.join("|")})`, "gi");
   const parts = text.split(regex);
   return (
     <>
       {parts.map((part, i) =>
-        keywords.some((kw) => kw.toLowerCase() === part.toLowerCase()) ? (
+        keywordsList.some((kw) => kw.toLowerCase() === part.toLowerCase()) ? (
           <mark key={i} className="bg-yellow-200 text-black rounded-sm px-0.5">
             {part}
           </mark>

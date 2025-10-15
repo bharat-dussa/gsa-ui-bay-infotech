@@ -1,13 +1,17 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useApp } from "../../store/app-wrapper.context";
 import { useSearchParams } from "react-router";
 
 export const CeilingFilter = () => {
-  const { setFilter } = useApp();
+  const { setFilter, setIsApplyFilterDisabled } = useApp();
   const [searchParams] = useSearchParams();
 
   const [min, setMin] = useState<string>("");
   const [max, setMax] = useState<string>("");
+  const isError = useMemo(
+    () => min && max && Number(min) > Number(max),
+    [min, max]
+  );
 
   useEffect(() => {
     const ceilingParam = searchParams.get("ceiling");
@@ -20,6 +24,11 @@ export const CeilingFilter = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    setIsApplyFilterDisabled(!!isError);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isError]);
+  
   const handleCeilingChange = (minVal: string, maxVal: string) => {
     setMin(minVal);
     setMax(maxVal);
@@ -64,7 +73,7 @@ export const CeilingFilter = () => {
         </div>
       </div>
 
-      {min && max && Number(min) > Number(max) && (
+      {isError && (
         <p className="mt-1 text-xs text-red-500">Min cannot exceed Max.</p>
       )}
     </div>

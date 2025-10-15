@@ -1,5 +1,3 @@
-"use client";
-
 import { Fragment, useMemo, useState } from "react";
 import { Listbox, Transition } from "@headlessui/react";
 import { Check, ChevronDown, Search } from "lucide-react";
@@ -18,7 +16,7 @@ export const SelectBox: React.FC<SelectBoxProps> = ({
   options,
   filterKey,
   multi = false,
-  isSearch
+  isSearch,
 }) => {
   const [query, setQuery] = useState("");
   const { filters, setFilter } = useApp();
@@ -40,8 +38,8 @@ export const SelectBox: React.FC<SelectBoxProps> = ({
   };
 
   const filteredOptions = useMemo(() => {
-    if(!isSearch) {
-        return options;
+    if (!isSearch) {
+      return options;
     }
     if (!query.trim()) return options;
     return options.filter((opt) =>
@@ -50,16 +48,24 @@ export const SelectBox: React.FC<SelectBoxProps> = ({
   }, [isSearch, options, query]);
 
   return (
-    <div className="w-full">
+    <div className="w-full" role="group" aria-labelledby={`${label}-label`}>
       <Listbox value={selected} onChange={handleChange} multiple={multi}>
         {({ open }) => (
           <>
-            <Listbox.Label className="block mb-2 text-sm font-medium text-gray-700">
+            <Listbox.Label
+              id={`${label}-label`}
+              className="block mb-2 text-sm font-medium text-gray-700"
+            >
               {label}
             </Listbox.Label>
 
             <div className="relative">
-              <Listbox.Button className="relative w-full cursor-pointer rounded-lg border border-gray-300 bg-white py-2 pl-3 pr-10 text-left shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
+              <Listbox.Button
+                aria-haspopup="listbox"
+                aria-expanded={open}
+                aria-label={`Select ${label}`}
+                className="relative w-full cursor-pointer rounded-lg border border-gray-300 bg-white py-2 pl-3 pr-10 text-left shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+              >
                 <span className="block truncate text-gray-800">
                   {multi
                     ? Array.isArray(selected) && selected.length > 0
@@ -79,48 +85,76 @@ export const SelectBox: React.FC<SelectBoxProps> = ({
                 leaveFrom="opacity-100"
                 leaveTo="opacity-0"
               >
-                <Listbox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-lg bg-white py-1 text-sm shadow-lg ring-1 ring-black/5 focus:outline-none z-50">
-                 {
-                    isSearch ?  <div className="sticky top-0 bg-white px-2 py-2 border-b border-gray-100 flex items-center gap-2">
-                    <Search className="h-4 w-4 text-gray-400" />
-                    <input
-                      type="text"
-                      value={query}
-                      onChange={(e) => setQuery(e.target.value)}
-                      placeholder="Search..."
-                      className="w-full text-sm outline-none bg-transparent placeholder-gray-400"
-                    />
-                  </div> : null
-                 }
-
-                  {filteredOptions.map((option) => (
-                    <Listbox.Option
-                      key={option}
-                      value={option}
-                      className={({ active }) =>
-                        `relative cursor-pointer select-none py-2 pl-10 pr-4  z-10 ${
-                          active ? "bg-blue-50 text-blue-700" : "text-gray-700"
-                        }`
-                      }
+                <Listbox.Options
+                  aria-label={`${label} options`}
+                  className="absolute mt-1 max-h-60 w-full overflow-auto rounded-lg bg-white py-1 text-sm shadow-lg ring-1 ring-black/5 focus:outline-none z-50"
+                >
+                  {isSearch ? (
+                    <div
+                      className="sticky top-0 bg-white px-2 py-2 border-b border-gray-100 flex items-center gap-2"
+                      role="search"
+                      aria-label={`Search ${label} options`}
                     >
-                      {({ selected }) => (
-                        <>
-                          <span
-                            className={`block truncate ${
-                              selected ? "font-medium" : "font-normal"
-                            }`}
-                          >
-                            {option}
-                          </span>
-                          {selected && (
-                            <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-blue-600">
-                              <Check className="h-4 w-4" />
+                      <Search
+                        className="h-4 w-4 text-gray-400"
+                        aria-hidden="true"
+                      />
+                      <input
+                        type="text"
+                        value={query}
+                        onChange={(e) => setQuery(e.target.value)}
+                        placeholder="Search..."
+                        className="w-full text-sm outline-none bg-transparent placeholder-gray-400"
+                        aria-label="Type to filter options"
+                      />
+                    </div>
+                  ) : null}
+
+                  {filteredOptions.length > 0 ? (
+                    filteredOptions.map((option) => (
+                      <Listbox.Option
+                        key={option}
+                        value={option}
+                        className={({ active }) =>
+                          `relative cursor-pointer select-none py-2 pl-10 pr-4  z-10 ${
+                            active
+                              ? "bg-blue-50 text-blue-700"
+                              : "text-gray-700"
+                          }`
+                        }
+                        aria-label={`${option} option`}
+                      >
+                        {({ selected }) => (
+                          <>
+                            <span
+                              className={`block truncate ${
+                                selected ? "font-medium" : "font-normal"
+                              }`}
+                              aria-checked={selected}
+                            >
+                              {option}
                             </span>
-                          )}
-                        </>
-                      )}
-                    </Listbox.Option>
-                  ))}
+                            {selected && (
+                              <span
+                                className="absolute inset-y-0 left-0 flex items-center pl-3 text-blue-600"
+                                aria-hidden="true"
+                              >
+                                <Check className="h-4 w-4" />
+                              </span>
+                            )}
+                          </>
+                        )}
+                      </Listbox.Option>
+                    ))
+                  ) : (
+                    <div
+                      className="py-2 px-3 text-sm text-gray-500 text-center"
+                      role="status"
+                      aria-live="polite"
+                    >
+                      No options found
+                    </div>
+                  )}
                 </Listbox.Options>
               </Transition>
             </div>

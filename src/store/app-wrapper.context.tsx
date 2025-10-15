@@ -28,6 +28,8 @@ interface AppContextType {
   loadPresets: () => void;
   isLoading: boolean;
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  isApplyFilterDisabled: boolean;
+  setIsApplyFilterDisabled: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const AppContext = createContext<AppContextType | null>(null);
@@ -52,6 +54,7 @@ type Props = {
 const AppWrapper: FC<Props> = ({ children }) => {
   const [filters, setFilters] = useState<Filters>(defaultFilters);
   const [isLoading, setIsLoading] = useState(false);
+  const [isApplyFilterDisabled, setIsApplyFilterDisabled] = useState(false);
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -71,6 +74,7 @@ const AppWrapper: FC<Props> = ({ children }) => {
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) setFilters(JSON.parse(saved));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -118,6 +122,8 @@ const AppWrapper: FC<Props> = ({ children }) => {
     window.location.reload();
   };
 
+  console.log('isLoading', isLoading);
+
   const value = useMemo(
     () => ({
       filters,
@@ -127,8 +133,18 @@ const AppWrapper: FC<Props> = ({ children }) => {
       loadPresets,
       isLoading,
       setIsLoading,
+      setIsApplyFilterDisabled,
+      isApplyFilterDisabled,
     }),
-    [filters]
+    [
+      filters,
+      isApplyFilterDisabled,
+      isLoading,
+      // loadPresets,
+      // resetFilters,
+      // savePresets,
+      // setFilter,
+    ]
   );
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

@@ -4,20 +4,25 @@ import {
   DialogPanel,
   Transition,
 } from "@headlessui/react";
-import {
-  Fragment,
-  type FC,
-  type PropsWithChildren
-} from "react";
+import { Fragment, type FC, type PropsWithChildren } from "react";
 
 interface IGSADialog extends PropsWithChildren {
+  id: string;
   isOpen: boolean;
   setOpen: (is: boolean) => void;
 }
-const GSADialog: FC<IGSADialog> = ({ isOpen, setOpen, children }) => {
+const GSADialog: FC<IGSADialog> = ({ id, isOpen, setOpen, children }) => {
   return (
-    <Transition appear show={isOpen} as={Fragment}>
-      <Dialog as="div" className="relative z-50" onClose={setOpen}>
+    <Transition appear show={isOpen} as={Fragment} key={id}>
+      <Dialog
+        id={id}
+        as="div"
+        className="relative z-50"
+        onClose={setOpen}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="filter-dialog-title"
+      >
         {/* Backdrop */}
         <Transition.Child
           as={Fragment}
