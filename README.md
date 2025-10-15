@@ -1,73 +1,64 @@
-# React + TypeScript + Vite
+# GSA UI — Bay Infotech
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A clean, minimal, and responsive UI built with **React + Vite**, **Tailwind CSS**, and **Headless UI**.  
+Designed for both mobile and desktop, focusing on accessibility, scalability, and modular architecture.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 Features
 
-## React Compiler
+- ⚡ **React + Vite** for lightning-fast builds and modern development setup  
+- 🎨 **Tailwind CSS** for utility-first responsive design  
+- 🧩 **Headless UI** (partially used) for accessible, unstyled components  
+- 🌗 **Simple black & white theme** for clean UI  
+- ♿ **Accessibility support** for better user experience  
+- 🔧 **Component-based architecture** for scalability  
 
-The React Compiler is currently not compatible with SWC. See [this issue](https://github.com/vitejs/vite-plugin-react/issues/428) for tracking the progress.
+---
 
-## Expanding the ESLint configuration
+## 🧠 Future Enhancements
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- Dark mode toggle  
+- Advanced theme management  
+- Pagination support  
+- TypeScript typings and unit testing  
+- Dedicated page structure (for multi-page routing with React Router)
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+---
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## 🛠️ Tech Stack
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- **Framework:** React + Vite  
+- **Styling:** Tailwind CSS  
+- **Components:** Headless UI  
+- **Deployment:** Vercel  
+
+---
+
+## 📦 Installation & Setup
+
+Follow the steps below to set up the project locally:
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/bharat-dussa/gsa-ui-bay-infotech.git
+```
+### 2. Navigate to the project directory
+```bash
+cd gsa-ui-bay-infotech
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### 3. Install dependencies
+```bash
+npm install or yarn install
 ```
+
+### 4. Start the development server
+```bash
+npm run dev or yarn dev
+```
+
+This will start the project on a local development server (usually at http://localhost:5173).
+
+
