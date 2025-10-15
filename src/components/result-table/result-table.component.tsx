@@ -274,6 +274,7 @@ export const ResultsTable = ({ data }: { data: any[] }) => {
         </table>
       </div>
       <GSADialog
+        id="gsa-dialog"
         isOpen={isDetailsModalOpen}
         setOpen={() => setIsDetailsModalOpen((is) => !is)}
       >

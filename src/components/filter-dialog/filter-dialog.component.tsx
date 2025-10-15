@@ -7,7 +7,7 @@ import {
 import { Fragment, type FC, type PropsWithChildren } from "react";
 
 interface IGSADialog extends PropsWithChildren {
-  id: string;
+  id?: string;
   isOpen: boolean;
   setOpen: (is: boolean) => void;
 }
